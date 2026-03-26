@@ -6,3 +6,44 @@ GO
 
 USE TicketManagementSystem;
 GO
+
+IF OBJECT_ID('dbo.Users', 'U') IS NOT NULL 
+	DROP TABLE dbo.Users;
+GO
+
+IF OBJECT_ID('dbo.Roles', 'U') IS NOT NULL
+	DROP TABLE dbo.Roles;
+GO
+
+CREATE TABLE dbo.Roles 
+(
+	Id INT IDENTITY(1,1) NOT NULL,
+	Name NVARCHAR(50) NOT NULL,
+	Description NVARCHAR(255) NULL,
+	CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+
+	CONSTRAINT PK_Roles PRIMARY KEY (Id),
+	CONSTRAINT UQ_Roles_Name UNIQUE (Name)
+);
+
+create table dbo.Users 
+(
+	Id int identity(1,1) not null,
+	FullName nvarchar(100) not null, 
+	Email nvarchar(255) not null,
+	PasswordHash nvarchar(500) not null,
+	RoleId int not null,
+	IsActive bit not null default 1,
+	CreatedAt datetime2 not null default sysutcdatetime(),
+	UpdatedAt datetime2 not null default sysutcdatetime(),
+
+	constraint PK_Users primary key (Id),
+	constraint UQ_Users_Email unique (Email),
+	constraint FK_Users_Roles foreign key (RoleId) references Roles(Id)
+);
+
+insert into Roles(Name, Description)
+values 
+	(N'Admin', N'System administrator'),
+    (N'Agent', N'Support staff who handles tickets'),
+    (N'Customer', N'End user who creates tickets');
