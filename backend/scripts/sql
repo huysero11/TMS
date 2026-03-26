@@ -1,0 +1,8 @@
+IF DB_ID('TicketManagementSystem') IS NULL
+BEGIN
+    CREATE DATABASE TicketManagementSystem;
+END
+GO
+
+USE TicketManagementSystem;
+GO
