@@ -6,7 +6,7 @@ namespace backend.Data
     public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
         public DbSet<Role> Roles { get; set; }
-        public DbSet<User>? Users { get;}
+        public DbSet<User> Users { get; set;}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -15,7 +15,7 @@ namespace backend.Data
             ConfigureUser(modelBuilder);
         }
 
-        private static void ConfigureUser(ModelBuilder modelBuilder)
+        private static void ConfigureRole(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Role>(entity =>
             {
@@ -37,11 +37,11 @@ namespace backend.Data
                 entity.HasMany(r => r.Users)
                     .WithOne(u => u.Role)
                     .HasForeignKey(u => u.RoleId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
 
-        private static void ConfigureRole(ModelBuilder modelBuilder)
+        private static void ConfigureUser(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(entity =>
             {

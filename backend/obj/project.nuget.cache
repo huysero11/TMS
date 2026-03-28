@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "IzqnFxD4J3k=",
+  "dgSpecHash": "102X3moockM=",
   "success": true,
   "projectFilePath": "D:\\Code\\my-projects\\tickets-management\\backend\\backend.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Admin\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.14\\microsoft.aspnetcore.authentication.jwtbearer.9.0.14.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.14\\microsoft.aspnetcore.openapi.9.0.14.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.bcl.cryptography\\9.0.13\\microsoft.bcl.cryptography.9.0.13.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.data.sqlclient\\7.0.0\\microsoft.data.sqlclient.7.0.0.nupkg.sha512",

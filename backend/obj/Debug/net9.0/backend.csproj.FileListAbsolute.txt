@@ -77,3 +77,4 @@ D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\backend.pdb
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\backend.genruntimeconfig.cache
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\ref\backend.dll
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\backend.sourcelink.json
+D:\Code\my-projects\tickets-management\backend\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
