@@ -7,6 +7,9 @@ GO
 USE TicketManagementSystem;
 GO
 
+if object_id('dbo.RefreshTokens', 'U') is not null
+	drop table dbo.RefreshTokens;
+
 IF OBJECT_ID('dbo.Users', 'U') IS NOT NULL 
 	DROP TABLE dbo.Users;
 GO
@@ -42,8 +45,30 @@ create table dbo.Users
 	constraint FK_Users_Roles foreign key (RoleId) references Roles(Id)
 );
 
+create table dbo.RefreshTokens 
+(
+	Id int identity(1, 1) not null,
+	UserId int not null,
+	TokenHash nvarchar(255) not null,
+	ExpiresAt datetime2 not null,
+	CreatedAt datetime2 not null default sysutcdatetime(),
+	RevokedAt datetime2 null,
+	ReplacedByTokenHash nvarchar(255) null,
+
+	constraint PK_RefreshTokens primary key (Id),
+	constraint FK_RefreshTokens_Users foreign key (UserId) references Users(Id)
+)
+GO
+
+create index IX_RefreshTokens_UserId on dbo.RefreshTokens(UserId);
+GO
+
+create index IX_RefreshTokens_TokenHash on dbo.RefreshTokens(TokenHash);
+GO
+
 insert into Roles(Name, Description)
 values 
 	(N'Admin', N'System administrator'),
     (N'Agent', N'Support staff who handles tickets'),
     (N'Customer', N'End user who creates tickets');
+GO

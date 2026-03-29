@@ -7,12 +7,52 @@ namespace backend.Data
     {
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set;}
+        public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             ConfigureRole(modelBuilder);
             ConfigureUser(modelBuilder);
+            ConfigRefreshToken(modelBuilder);
+        }
+
+        private void ConfigRefreshToken(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.ToTable("RefreshTokens");
+                entity.HasKey(rt => rt.Id);
+
+                entity.Property(rt => rt.Id).ValueGeneratedOnAdd();
+
+                entity.Property(rt => rt.TokenHash)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(rt => rt.ExpiresAt)
+                    .HasColumnType("datetime2");
+
+                entity.Property(rt => rt.CreatedAt)
+                    .HasColumnType("datetime2")
+                    .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                entity.Property(rt => rt.RevokedAt)
+                    .HasColumnType("datetime2");
+
+                entity.Property(rt => rt.ReplacedByTokenHash)
+                    .HasMaxLength(255);
+
+                entity.HasIndex(rt => rt.UserId);
+
+                entity.HasIndex(rt => rt.TokenHash)
+                    .IsUnique();
+
+                entity.HasOne(rt => rt.User)
+                    .WithMany(u => u.RefreshTokens)
+                    .HasForeignKey(rt => rt.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
 
         private static void ConfigureRole(ModelBuilder modelBuilder)

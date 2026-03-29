@@ -11,5 +11,6 @@ namespace backend.Models.Entities
         public bool IsActive { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; } = null!;
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }

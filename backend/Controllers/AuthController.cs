@@ -10,6 +10,7 @@ namespace backend.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
+        private readonly string RefreshTokenCookieName = "refreshToken";
         private readonly IAuthService _authService;
 
         public AuthController(IAuthService authService)
@@ -57,20 +58,107 @@ namespace backend.Controllers
 
             try
             {
-                var authResponseDto = await _authService.LoginAsync(request);
+                var loginResponseDTO = await _authService.LoginAsync(request);
+                Response.Cookies.Append(
+                    RefreshTokenCookieName,
+                    loginResponseDTO.RefreshToken,
+                    GetRefreshTokenCookieOptions()
+                );
                 return Ok(new
                 {
                     message = "Login successfully!",
-                    data = authResponseDto
+                    data = new AuthResponseDTO
+                    {
+                        AccessToken = loginResponseDTO.AccessToken,
+                        UserProfile = loginResponseDTO.UserProfile
+                    }
                 });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new {
+                    message = ex.Message,
+                    innerMessage = ex.InnerException?.Message,
+                    detail = ex.ToString() 
+                });
+            }
+        }
+
+        private CookieOptions GetRefreshTokenCookieOptions()
+        {
+            return new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddDays(7),
+                Path = "/api/auth"
+            };
+        }
+
+        [AllowAnonymous]
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            try
+            {
+                if (!Request.Cookies.TryGetValue(RefreshTokenCookieName, out var refreshToken))
+                {
+                    return BadRequest(new { message = "Refresh token is missing" });
+                }
+
+                var refreshResponseDTO = await _authService.RefreshAsync(refreshToken);
+                Response.Cookies.Append(
+                    RefreshTokenCookieName,
+                    refreshResponseDTO.RefreshToken,
+                    GetRefreshTokenCookieOptions()
+                );
+
+                return Ok(new
+                {
+                    message = "Token refreshed successfully",
+                    data = new AuthResponseDTO
+                    {
+                        AccessToken = refreshResponseDTO.AccessToken,
+                        UserProfile = refreshResponseDTO.UserProfile
+                    }
+                });
+
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
-    
-    
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                if (Request.Cookies.TryGetValue(RefreshTokenCookieName, out var refreshToken) &&
+                    !string.IsNullOrWhiteSpace(refreshToken))
+                {
+                    await _authService.LogoutAsync(refreshToken);
+                }
+
+                Response.Cookies.Delete(RefreshTokenCookieName, GetRefreshTokenCookieOptions());
+
+                return Ok(new
+                {
+                    message = "Logout successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
+        }
+
+
         [Authorize]
         [HttpGet("me")]
         public async Task<IActionResult> GetMe()
