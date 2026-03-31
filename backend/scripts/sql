@@ -7,6 +7,14 @@ GO
 USE TicketManagementSystem;
 GO
 
+if object_id('dbo.Tickets', 'U') is not null
+	drop table dbo.Tickets;
+go 
+
+if object_id('dbo.TicketCategories', 'U') is not null
+	drop table dbo.TicketCategories;
+go 
+
 if object_id('dbo.RefreshTokens', 'U') is not null
 	drop table dbo.RefreshTokens;
 
@@ -66,9 +74,76 @@ GO
 create index IX_RefreshTokens_TokenHash on dbo.RefreshTokens(TokenHash);
 GO
 
+create table dbo.TicketCategories (
+	Id int identity(1, 1) not null,
+	Name nvarchar(100) not null,
+	Description nvarchar(255) null,
+	IsActive bit not null default 1,
+	CreatedAt datetime2 not null default sysutcdatetime(),
+	UpdatedAt datetime2 not null default sysutcdatetime(),
+
+	constraint PK_TicketCategories primary key (Id),
+	constraint UQ_TicketCategories_Name unique (Name)
+);
+go 
+
+create table dbo.Tickets (
+	Id int identity(1, 1) not null,
+	TicketCode nvarchar(20) not null,
+	Title nvarchar(255) not null,
+	Description nvarchar(max) null,
+	Priority nvarchar(20) not null,
+	Status nvarchar(20) not null,
+	CategoryId int not null,
+	CreatedByUserId int not null,
+	AssignedToUserId int null,
+	CreatedAt datetime2 not null default sysutcdatetime(),
+	UpdatedAt datetime2 not null default sysutcdatetime(),
+	ClosedAt datetime2 null,
+
+	constraint PK_Tickets primary key (Id),
+	constraint UQ_Tickets_TicketCode unique (TicketCode),
+
+	constraint FK_Tickets_Categories foreign key (CategoryId) references TicketCategories(Id),
+	constraint FK_Tickets_CreatedBy foreign key (CreatedByUserId) references Users(Id),
+	constraint FK_Tickets_AssignedTo foreign key (AssignedToUserId) references Users(Id),
+
+	constraint CK_Tickets_Priority 
+		check (Priority in ('Low', 'Medium', 'High', 'Urgent')),
+	constraint CK_Tickets_Status 
+		check (Status in ('Open', 'In Progress', 'Resolved', 'Closed', 'Cancelled'))
+);
+go
+
+CREATE INDEX IX_Tickets_CategoryId ON dbo.Tickets(CategoryId);
+GO
+
+CREATE INDEX IX_Tickets_CreatedByUserId ON dbo.Tickets(CreatedByUserId);
+GO
+
+CREATE INDEX IX_Tickets_AssignedToUserId ON dbo.Tickets(AssignedToUserId);
+GO
+
+CREATE INDEX IX_Tickets_Status ON dbo.Tickets(Status);
+GO
+
+CREATE INDEX IX_Tickets_Priority ON dbo.Tickets(Priority);
+GO
+
+CREATE INDEX IX_Tickets_CreatedAt ON dbo.Tickets(CreatedAt);
+GO
+
 insert into Roles(Name, Description)
 values 
 	(N'Admin', N'System administrator'),
     (N'Agent', N'Support staff who handles tickets'),
     (N'Customer', N'End user who creates tickets');
+GO
+
+INSERT INTO dbo.TicketCategories (Name, Description)
+VALUES
+    (N'Technical', N'Technical issues and bugs'),
+    (N'Billing', N'Billing and payment issues'),
+    (N'Account', N'Account access and profile issues'),
+    (N'General', N'General support requests');
 GO

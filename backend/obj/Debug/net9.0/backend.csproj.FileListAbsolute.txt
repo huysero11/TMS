@@ -6,6 +6,7 @@ D:\Code\my-projects\tickets-management\backend\bin\Debug\net9.0\backend.deps.jso
 D:\Code\my-projects\tickets-management\backend\bin\Debug\net9.0\backend.runtimeconfig.json
 D:\Code\my-projects\tickets-management\backend\bin\Debug\net9.0\backend.dll
 D:\Code\my-projects\tickets-management\backend\bin\Debug\net9.0\backend.pdb
+D:\Code\my-projects\tickets-management\backend\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\Code\my-projects\tickets-management\backend\bin\Debug\net9.0\Microsoft.AspNetCore.OpenApi.dll
 D:\Code\my-projects\tickets-management\backend\bin\Debug\net9.0\Microsoft.Bcl.Cryptography.dll
 D:\Code\my-projects\tickets-management\backend\bin\Debug\net9.0\Microsoft.Data.SqlClient.dll
@@ -62,6 +63,7 @@ D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\backend.Assembly
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\backend.csproj.CoreCompileInputs.cache
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\backend.MvcApplicationPartsAssemblyInfo.cs
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\backend.MvcApplicationPartsAssemblyInfo.cache
+D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\backend.sourcelink.json
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\rjimswa.dswa.cache.json
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
@@ -76,5 +78,3 @@ D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\refint\backend.d
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\backend.pdb
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\backend.genruntimeconfig.cache
 D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\ref\backend.dll
-D:\Code\my-projects\tickets-management\backend\obj\Debug\net9.0\backend.sourcelink.json
-D:\Code\my-projects\tickets-management\backend\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

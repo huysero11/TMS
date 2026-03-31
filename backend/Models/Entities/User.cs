@@ -12,5 +12,7 @@ namespace backend.Models.Entities
         public int RoleId { get; set; }
         public Role Role { get; set; } = null!;
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+        public ICollection<Ticket> CreatedTickets { get; set; } = new List<Ticket>();
+        public ICollection<Ticket> AssignedTickets { get; set; } = new List<Ticket>();
     }
 }

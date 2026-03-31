@@ -8,6 +8,8 @@ namespace backend.Data
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set;}
         public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
+        public DbSet<Ticket> Tickets { get; set; } = null!;
+        public DbSet<TicketCategory> TicketCategories { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -15,6 +17,7 @@ namespace backend.Data
             ConfigureRole(modelBuilder);
             ConfigureUser(modelBuilder);
             ConfigRefreshToken(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
 
         private void ConfigRefreshToken(ModelBuilder modelBuilder)
