@@ -42,5 +42,27 @@ namespace backend.Controllers
                 data = ticketResponseDto
             });
         }
+    
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyTickets()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new
+                {
+                    status = "fail",
+                    message = "Invalid user ID claim"
+                });
+            }
+
+            var tickets = await _ticketService.GetTicketsAsync(userId);
+            return Ok(new
+            {
+                status = "success",
+                message = "Tickets retrieved successfully",
+                data = tickets
+            });
+        }
     }
 }

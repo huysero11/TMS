@@ -73,6 +73,34 @@ namespace backend.Services
         {
             return $"TCK-{ticketId:D6}";
         }
+    
+        public async Task<List<TicketListItemResponseDTO>> GetTicketsAsync(int userId)
+        {
+            var tickets = await _context.Tickets
+                    .AsNoTracking()
+                    .Where(t => t.CreatedByUserId == userId)
+                    .Include(t => t.Category)
+                    .OrderByDescending(t => t.CreatedAt)
+                    .ThenByDescending(t => t.Id)
+                    .Select(t => new TicketListItemResponseDTO
+                    {
+                        Id = t.Id,
+                        TicketCode = t.TicketCode,
+                        Title = t.Title,
+                        Priority = t.Priority,
+                        Status = t.Status,
+                        CategoryId = t.CategoryId,
+                        CategoryName = t.Category.Name,
+                        CreatedByUserId = t.CreatedByUserId,
+                        AssignedToUserId = t.AssignedToUserId,
+                        CreatedAt = t.CreatedAt,
+                        UpdatedAt = t.UpdatedAt,
+                        ClosedAt = t.ClosedAt
+                    })
+                    .ToListAsync();
+            return tickets;
+            
+        }
     }
 
     
