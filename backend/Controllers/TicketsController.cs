@@ -64,5 +64,37 @@ namespace backend.Controllers
                 data = tickets
             });
         }
+    
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetMyTicketDetail([FromRoute] int id)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new
+                {
+                    status = "fail",
+                    message = "Invalid user ID claim"
+                });
+            }
+
+            var ticketDetail = await _ticketService.GetMyTicketDetailAsync(userId, id);
+
+            if (ticketDetail is null)
+            {
+                return NotFound(new
+                {
+                    status = "fail",
+                    message = "Ticket not found"
+                });
+            }
+            
+            return Ok(new
+            {
+                status = "success",
+                message = "Ticket detail retrieved successfully",
+                data = ticketDetail
+            });
+        }
     }
 }
