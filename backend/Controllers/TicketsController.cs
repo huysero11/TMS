@@ -129,5 +129,38 @@ namespace backend.Controllers
                 });
             }
         }
+    
+        [HttpPatch("{id:int}/close")]
+        public async Task<IActionResult> CloseMyTicket([FromRoute] int id)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim is null || !int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new
+                {
+                    status = "fail",
+                    message = "Invalid user ID claim"
+                });
+            }
+
+            try
+            {
+                var closedTicket = await _ticketService.CloseMyTicketAsync(userId, id);
+                return Ok(new
+                {
+                    status = "success",
+                    message = "Ticket closed successfully",
+                    data = closedTicket
+                });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new
+                {
+                    status = "fail",
+                    message = ex.Message
+                });
+            }
+        }
     }
 }
