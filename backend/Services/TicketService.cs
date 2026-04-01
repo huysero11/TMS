@@ -224,5 +224,54 @@ namespace backend.Services
                             .FirstOrDefaultAsync();
             return closedTicket ?? throw new Exception("Ticket not found after closing");
         }
+    
+        public async Task<TicketDetailResponseDTO> CancelMyTicketAsync(int userId, int ticketId)
+        {
+            var ticket = await _context.Tickets
+                            .FirstOrDefaultAsync(t => t.Id == ticketId && t.CreatedByUserId == userId);
+            if (ticket is null)
+            {
+                throw new Exception("Ticket not found");
+            }
+            if (ticket.Status == TicketStatus.Cancelled)
+            {
+                throw new InvalidOperationException("Ticket is already cancelled.");
+            }
+
+            if (ticket.Status == TicketStatus.Closed)
+            {
+                throw new InvalidOperationException("Closed ticket cannot be cancelled.");
+            }
+
+            ticket.Status = TicketStatus.Cancelled;
+            ticket.UpdatedAt = DateTime.UtcNow;
+            ticket.ClosedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            var cancelledTicket = await _context.Tickets
+                                    .AsNoTracking()
+                                    .Where(t => t.Id == ticket.Id)
+                                    .Select(t => new TicketDetailResponseDTO
+                                    {
+                                        Id = t.Id,
+                                        TicketCode = t.TicketCode,
+                                        Title = t.Title,
+                                        Description = t.Description,
+                                        Priority = t.Priority,
+                                        Status = t.Status,
+                                        CategoryId = t.CategoryId,
+                                        CategoryName = t.Category.Name,
+                                        CreatedByUserId = t.CreatedByUserId,
+                                        CreatedByUserName = t.CreatedByUser.FullName,
+                                        AssignedToUserId = t.AssignedToUserId,
+                                        AssignedToUserName = t.AssignedToUser != null ? t.AssignedToUser.FullName : null,
+                                        CreatedAt = t.CreatedAt,
+                                        UpdatedAt = t.UpdatedAt,
+                                        ClosedAt = t.ClosedAt
+                                    })
+                                    .FirstOrDefaultAsync();
+            return cancelledTicket ?? throw new Exception("Ticket not found after cancellation");
+        }
     }
 }

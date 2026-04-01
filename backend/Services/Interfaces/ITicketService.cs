@@ -9,5 +9,6 @@ namespace backend.Services.Interfaces
         Task<TicketDetailResponseDTO> GetMyTicketDetailAsync(int userId, int ticketId);
         Task<TicketDetailResponseDTO> UpdateMyTicketAsync(int userId, int ticketId, UpdateTicketRequestDTO request);
         Task<TicketDetailResponseDTO> CloseMyTicketAsync(int userId, int ticketId);
+        Task<TicketDetailResponseDTO> CancelMyTicketAsync(int userId, int ticketId);
     }
 }
