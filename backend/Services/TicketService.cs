@@ -128,7 +128,54 @@ namespace backend.Services
                 .FirstOrDefaultAsync();       
             return ticketDetail ?? throw new Exception("Ticket not found");   
         }
-    }
-
     
+        public async Task<TicketDetailResponseDTO> UpdateMyTicketAsync(int userId, int ticketId, 
+                                                                UpdateTicketRequestDTO request)
+        {
+            var ticket = await _context.Tickets
+                                .FirstOrDefaultAsync(t => t.Id == ticketId && t.CreatedByUserId == userId);
+            if (ticket is null)
+            {
+                throw new Exception("Ticket not found");
+            }
+            
+            if (ticket.Status == TicketStatus.Closed || ticket.Status == TicketStatus.Cancelled)
+            {
+                throw new Exception("Cannot update a closed or cancelled ticket");
+            }
+
+            var category = await _context.TicketCategories
+                                .FirstOrDefaultAsync(c => c.Id == request.CategoryId && c.IsActive);
+            if (category is null)
+            {
+                throw new Exception("Invalid category");
+            }
+
+            ticket.Title = request.Title.Trim();
+            ticket.Description = request.Description.Trim();
+            ticket.Priority = request.Priority;
+            ticket.CategoryId = request.CategoryId;
+            ticket.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return new TicketDetailResponseDTO
+            {
+                Id = ticket.Id,
+                TicketCode = ticket.TicketCode,
+                Title = ticket.Title,
+                Description = ticket.Description,
+                Priority = ticket.Priority,
+                Status = ticket.Status,
+                CategoryId = category.Id,
+                CategoryName = category.Name,
+                CreatedByUserId = ticket.CreatedByUserId,
+                CreatedByUserName = string.Empty,
+                AssignedToUserId = ticket.AssignedToUserId,
+                AssignedToUserName = null,
+                CreatedAt = ticket.CreatedAt,
+                UpdatedAt = ticket.UpdatedAt,
+                ClosedAt = ticket.ClosedAt
+            };
+        }
+    }
 }

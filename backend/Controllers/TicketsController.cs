@@ -96,5 +96,38 @@ namespace backend.Controllers
                 data = ticketDetail
             });
         }
+    
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateMyTicket([FromRoute] int id, [FromBody] UpdateTicketRequestDTO request)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim is null || !int.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized(new
+                {
+                    status = "fail",
+                    message = "Invalid user ID claim"
+                });
+            }
+
+            try
+            {
+                var updatedTicket = await _ticketService.UpdateMyTicketAsync(userId, id, request);
+                return Ok(new
+                {
+                    status = "success",
+                    message = "Ticket updated successfully",
+                    data = updatedTicket
+                });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new
+                {
+                    status = "fail",
+                    message = ex.Message
+                });
+            }
+        }
     }
 }
